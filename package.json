@@ -1,0 +1,14 @@
+{
+  "name": "dependent-find-tool",
+  "version": "1.0.0",
+  "description": "This is a tool to find dependents in a given org.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Mike Stemle <themanchicken@duck.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@octokit/core": "^5.0.0"
+  }
+}
