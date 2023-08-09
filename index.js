@@ -63,11 +63,12 @@ const init = () => {
 }
 
 const get_repository_leads = async ({ opts, gh }) => {
+  const org_name = opts.org
   const dep_name = opts.dependency
 
   // Call the GitHub code search API to find all repositories that import the lodash package and are not archived.
 
-  const terms = encodeURI(`org:WPMedia ${dep_name} -is:archived`)
+  const terms = encodeURI(`org:${org_name}+${dep_name}+-is:archived+-is:fork+language:json`)
   console.log({ terms })
 
   return gh.paginate(
@@ -75,15 +76,23 @@ const get_repository_leads = async ({ opts, gh }) => {
     {
       q: terms,
     },
-    (resp) => resp,
+    // (resp) => resp.data,
   )
 }
 
 const find_affected_dependents = async ({ gh, opts }, paginator) => {
-  console.log(JSON.stringify({ paginator }, undefined, 2))
+  // console.log(JSON.stringify({ paginator }, undefined, 2))
 
-  for (const item of paginator) {
-    console.log(item)
+  // First, let's filter out anything that's not a package.json or package-lock.json file.
+  const filtered_and_mapped = paginator.filter(
+    (item) =>
+      !!item?.repository?.full_name && item.name.match(/package(-lock)?\.json$/i)
+  ).map(
+    (item) => ({ repo_name: item?.repository?.full_name, file_name: item.name })
+  )
+
+  for (const item of filtered_and_mapped) {
+    console.log("!!ITEM!!", item)
   }
 
   return Promise.resolve()
